@@ -1,0 +1,105 @@
+# ================================
+# SALES ANALYSIS PROJECT
+# ================================
+
+# Import Libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load Dataset
+df = pd.read_csv('sales_data.csv')
+
+# Display first rows
+print(df.head())
+
+# ================================
+# DATA CLEANING
+# ================================
+
+# Convert date column
+df['Order Date'] = pd.to_datetime(df['Order Date'])
+
+# Check null values
+print(df.isnull().sum())
+
+# Drop nulls (if any)
+df = df.dropna()
+
+# ================================
+# KPI CALCULATIONS
+# ================================
+
+# Total Revenue
+total_revenue = df['Sales'].sum()
+print("Total Revenue:", total_revenue)
+
+# Average Order Value
+aov = df['Sales'].mean()
+print("Average Order Value:", aov)
+
+# Top Products
+top_products = df.groupby('Product')['Sales'].sum().sort_values(ascending=False).head(5)
+print("Top Products:\n", top_products)
+
+# Top Regions
+top_regions = df.groupby('Region')['Sales'].sum().sort_values(ascending=False)
+print("Top Regions:\n", top_regions)
+
+# ================================
+# TIME-BASED ANALYSIS
+# ================================
+
+df['Month'] = df['Order Date'].dt.to_period('M')
+monthly_sales = df.groupby('Month')['Sales'].sum()
+
+# ================================
+# VISUALIZATIONS
+# ================================
+
+sns.set(style="whitegrid")
+
+# 1. Monthly Sales Trend
+plt.figure(figsize=(10,5))
+monthly_sales.plot()
+plt.title("Monthly Sales Trend")
+plt.xlabel("Month")
+plt.ylabel("Sales")
+plt.xticks(rotation=45)
+plt.show()
+
+# 2. Top Products
+plt.figure(figsize=(8,5))
+top_products.plot(kind='bar', color='skyblue')
+plt.title("Top 5 Products")
+plt.ylabel("Sales")
+plt.xticks(rotation=45)
+plt.show()
+
+# 3. Sales by Region
+plt.figure(figsize=(8,5))
+top_regions.plot(kind='bar', color='orange')
+plt.title("Sales by Region")
+plt.ylabel("Sales")
+plt.xticks(rotation=45)
+plt.show()
+
+# ================================
+# INSIGHTS (PRINT)
+# ================================
+
+print("\n=== KEY INSIGHTS ===")
+
+print("1. The business generated a total revenue of:", total_revenue)
+
+print("2. The average order value is:", aov)
+
+print("3. Top performing product is:", top_products.index[0])
+
+print("4. Region with highest sales is:", top_regions.index[0])
+
+print("5. Sales show seasonal trends based on monthly variation.")
+
+# ================================
+# END OF PROJECT
+# ================================
